@@ -41,8 +41,8 @@ Route::get('/product/create',[product_controller::class, 'create'])->name('produ
 Route::post('/product',[product_controller::class, 'store'])->name('product.store');
 Route::get('/product/{product:code_product}/edit',[product_controller::class, 'edit'])->name('product.edit');
 Route::get('/product/{product:code_product}',[product_controller::class, 'show'])->name('product.show');
-Route::put('/product/{id}',[product_controller::class, 'update'])->name('product.update');
-Route::delete('/product/{id}',[product_controller::class, 'destroy'])->name('product.destroy');
+Route::put('/product/{product:code_product}',[product_controller::class, 'update'])->name('product.update');
+Route::delete('/product/{product:code_product}',[product_controller::class, 'destroy'])->name('product.destroy');
 
 Route::resource('category', category_controller::class);
 // Route::get('/portfolio', function () {

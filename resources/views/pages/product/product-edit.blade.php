@@ -10,7 +10,7 @@
     </div>
     <!-- form -->
     <div class="card-body">
-      <form action="{{ route('product.update', $detail_product->id) }}" method="POST">
+      <form action="{{ route('product.update', $detail_product->code_product) }}" method="POST" enctype="multipart/form-data">
         @method('PUT')
         @csrf
         <div class="mb-3">
@@ -47,9 +47,15 @@
           @enderror
         </div>
         <div class="mb-3">
-          <label for="price" class="form-label">Image</label>
-          <input type="file" class="form-control" id="price" name="image">
-          @error('price')
+          <label for="image" class="form-label">Image</label>
+          <input type="file" 
+           name="image" 
+           class="dropify" 
+           accept=".jpg,.png,.jpeg" 
+           data-allowed-file-extensions="jpg png jpeg" 
+           {{-- Gunakan data-default-file, bukan value --}}
+           data-default-file="{{ $detail_product->image ? asset('image_product/' . $detail_product->image) : asset('image_product/img-not-found.png') }}" />
+          @error('image')
           <div class="form-text text-danger">{{ $message }}</div>
           @enderror
         </div>

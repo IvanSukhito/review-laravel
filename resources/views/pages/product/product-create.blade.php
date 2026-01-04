@@ -44,7 +44,11 @@
         </div>
         <div class="mb-3">
           <label for="image" class="form-label">Image</label>
-          <input type="file" class="form-control" id="image" name="image">
+          <input type="file" 
+              name="image" 
+              class="form-control dropify" 
+              accept=".jpg,.png,.jpeg" 
+              data-allowed-file-extensions="jpg png jpeg" />          
           @error('image')
           <div class="form-text text-danger">{{ $message }}</div>
           @enderror
@@ -73,5 +77,8 @@ $(document).ready(function() {
         placeholder: "Pilih data...",
         allowClear: true
     });
+    $('.dropify').dropify();
 });
+
+
 </script>

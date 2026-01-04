@@ -151,11 +151,13 @@ class product_controller extends Controller
     public function update(Request $request, Product $product)
     {
         //
+        // dd($request->image);
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:1000',
             'stock' => 'required|integer|min:1|max:10000',
             'description' => 'nullable|string',
+            
         ],
         [
             'name.required' => 'Nama product wajib diisi.',
@@ -169,26 +171,42 @@ class product_controller extends Controller
             'stock.max' => 'Stok product maksimal 1000.',
         ]);
 
-        $update_data = Product::where('id', $request->id)
+        $filename = $product->image;
+
+        if($request->image){
+            
+            $old_image_path = public_path('/image_product/'. $filename);
+            
+            if(is_file($old_image_path)){
+                unlink($old_image_path);
+            }
+            
+            $file_obj = $request->file('image'); // Ini akan memastikan kita mengambil Objek File
+            $nama_file = Str::random(5) . '.' . $file_obj->getClientOriginalExtension();
+            // $nama_file = Str::random(5).'.'.$request->image->extension();
+            $file = $request->image->move(public_path('image_product'), $nama_file);
+            $filename = $file->getFileName();
+        }
+
+        $update_data = Product::where('code_product', $product->code_product)
             ->update([
                 'name' => $request->name,
                 'price' => $request->price,
                 'stock' => $request->stock,
+                'image' => $filename,
                 'description' => $request->description,
             ]);
         
-        return redirect()->route('product')->with('success', 'Product updated successfully.');
-        // dd('berhasil bos');
+        $message = new HtmlString("Product <b>{$product->name}</b> updated successfully.");
+        return redirect()->route('product')->with('success', $message);
+        
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product, $id)
+    public function destroy(Product $product)
     {
-        //
-        // dd($id);
-        $product = Product::findOrFail($id);
         $product->delete();
         $message = new HtmlString("Product <b>{$product->name}</b> deleted successfully.");
         return redirect()->route('product')->with('success', $message);

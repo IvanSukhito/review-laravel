@@ -40,8 +40,29 @@
           <div class="form-text text-danger">{{ $message }}</div>
           @enderror
         </div>
+        <div class="mb-3">
+          <label for="image" class="form-label">Image</label>
+          <input type="file" 
+           name="image" 
+           class="dropify" 
+           accept=".jpg,.png,.jpeg" 
+           data-allowed-file-extensions="jpg png jpeg" 
+           {{-- Gunakan data-default-file, bukan value --}}
+           data-default-file="{{ $detail_product->image ? asset('image_product/' . $detail_product->image) : asset('image_product/img-not-found.png') }}" />
+          @error('image')
+          <div class="form-text text-danger">{{ $message }}</div>
+          @enderror
+        </div>
         <a href="{{ route('product') }}" class="btn btn-secondary">Back</a>
       </form>
   </div>
    
 @endsection
+
+<script>
+$(document).ready(function() {
+ 
+    $('.dropify').dropify();
+});
+
+</script>
