@@ -86,7 +86,7 @@ class product_controller extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:1000',
-            'stock' => 'required|integer|min:1|max:1000',
+            'stock' => 'required|integer|min:1|max:10000',
             'description' => 'nullable|string',
             'image' => 'required|image|mimes:jpg,png,jpeg|max:5120',        ],
         [
@@ -104,28 +104,32 @@ class product_controller extends Controller
         ]);
 
         $nama_file = Str::random(5).'.'.$request->image->extension();
-        $request->image->move(public_path('image_product'), $nama_file);
+        $file = $request->image->move(public_path('image_product'), $nama_file);
+
+        // dd($file->getFileName());
 
         $last_code_product = Product::orderBy('code_product','desc')->first();
         $code_product = $this->logic_for_code_product($last_code_product);
-        $request->merge([
-            'code_product' => $code_product,
-            'image' => $nama_file
-        ]);
-        //buatkan code product misalkan ada 4 kode, 2 hruf, 2angka, jadi misalkan aa01, aa02 sampai aa99 lalu lanjut ke ab01, ab02, ab03, ab99, lalu ac01, seterusnya ini gimana ya  
-        // code_product = Str::random(4);
-        Product::create($request->all());
-        return redirect()->route('product')->with('success', 'Product created successfully.');
+
+        $data = $request->except('image');
+        $data['image'] = $file->getFileName();
+        $data['code_product'] = $code_product;
+        
+        $product = Product::create($data);
+        $message = new HtmlString("Product <b>{$product->name}</b> created successfully.");
+
+        return redirect()->route('product')->with('success', $message);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product, $id)
+    public function show(Product $product)
     {
         //
-        // dd($id);
-        $detail_product = Product::findOrFail($id);
+        $detail_product = $product;
+        // dd($product);
+        // $detail_product = Product::findOrFail($id);
         // dd($detail_product);
         return view('pages.product.product-show', compact('detail_product'));
     }
@@ -133,10 +137,10 @@ class product_controller extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product, $id)
+    public function edit(Product $product)
     {
         //
-        $detail_product = Product::findOrFail($id);
+        $detail_product = $product;
         $data_category = Category::get();
         return view('pages.product.product-edit', compact('detail_product', 'data_category'));
     }

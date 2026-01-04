@@ -50,8 +50,8 @@
           <td>{{ $product->category->name ?? ' Tidak ada '}}</td>
            <td>
             
-            <a href="{{ route('product.show', $product->id) }}" class="btn btn-info btn-sm">Show</a>
-            <a href="{{ route('product.edit', $product->id) }}" class="btn btn-warning btn-sm">Edit</a>
+            <a href="{{ route('product.show', $product->code_product) }}" class="btn btn-info btn-sm">Show</a>
+            <a href="{{ route('product.edit', $product->code_product) }}" class="btn btn-warning btn-sm">Edit</a>
             <!-- <a href="{{ route('product.destroy', $product->id) }}" class="btn btn-danger btn-sm">Delete</a>  -->
             <!-- Button trigger modal -->
           <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-{{ $product->id }}">
