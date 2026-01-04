@@ -29,6 +29,7 @@
       <thead>
          <tr>
            <th scope="col">ID</th>
+           <th scop="col">Code Product</th>
            <th scope="col">Nama</th>
            <th scop="col">Stok</th>
            <th scope="col">Harga</th>
@@ -41,11 +42,12 @@
         @forelse($data_product as $product)
          <tr>
            <th scope="row">{{ $product->id }}</th>
+           <td>{{ $product->code_product }}</td>
            <td>{{ $product->name }}</td>
            <td>{{ $product->stock }}</td>
            <td>{{ $product->price }}</td>
            <!-- <td>{{ $product->category_name ?? 'Tidak ada' }}</td> -->
-          <td>{{ $product->category->name}}</td>
+          <td>{{ $product->category->name ?? ' Tidak ada '}}</td>
            <td>
             
             <a href="{{ route('product.show', $product->id) }}" class="btn btn-info btn-sm">Show</a>

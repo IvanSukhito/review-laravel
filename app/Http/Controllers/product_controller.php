@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\HtmlString;
+use App\Models\Category;
+use Illuminate\Support\Str;
 
 class product_controller extends Controller
 {
@@ -71,7 +73,8 @@ class product_controller extends Controller
     public function create()
     {
         //
-        return view('pages.product.product-create');
+        $data_category = Category::get();
+        return view('pages.product.product-create', compact('data_category'));
     }
 
     /**
@@ -85,7 +88,7 @@ class product_controller extends Controller
             'price' => 'required|numeric|min:1000',
             'stock' => 'required|integer|min:1|max:1000',
             'description' => 'nullable|string',
-        ],
+            'image' => 'required|image|mimes:jpg,png,jpeg|max:5120',        ],
         [
             'name.required' => 'Nama product wajib diisi.',
             'name.string' => 'Nama product harus berupa teks.',
@@ -96,7 +99,21 @@ class product_controller extends Controller
             'stock.required' => 'Stok product wajib diisi.',
             'stock.min' => 'Stok product minimal 1.',
             'stock.max' => 'Stok product maksimal 1000.',
+            'image.mimes' => 'Gambar hanya boleh dengan format jpg, png, jpeg',
+            'image.image' => 'file harus berupa gambar',
         ]);
+
+        $nama_file = Str::random(5).'.'.$request->image->extension();
+        $request->image->move(public_path('image_product'), $nama_file);
+
+        $last_code_product = Product::orderBy('code_product','desc')->first();
+        $code_product = $this->logic_for_code_product($last_code_product);
+        $request->merge([
+            'code_product' => $code_product,
+            'image' => $nama_file
+        ]);
+        //buatkan code product misalkan ada 4 kode, 2 hruf, 2angka, jadi misalkan aa01, aa02 sampai aa99 lalu lanjut ke ab01, ab02, ab03, ab99, lalu ac01, seterusnya ini gimana ya  
+        // code_product = Str::random(4);
         Product::create($request->all());
         return redirect()->route('product')->with('success', 'Product created successfully.');
     }
@@ -120,7 +137,8 @@ class product_controller extends Controller
     {
         //
         $detail_product = Product::findOrFail($id);
-        return view('pages.product.product-edit', compact('detail_product'));
+        $data_category = Category::get();
+        return view('pages.product.product-edit', compact('detail_product', 'data_category'));
     }
 
     /**
@@ -171,5 +189,29 @@ class product_controller extends Controller
         $message = new HtmlString("Product <b>{$product->name}</b> deleted successfully.");
         return redirect()->route('product')->with('success', $message);
         
+    }
+
+    private function logic_for_code_product($last_code_product){
+
+        if(!$last_code_product){
+            $new_code = 'AA01';
+        }else{
+            $last_code = $last_code_product->code_product;
+            $huruf = substr($last_code,0,2);
+            $angka = (int) substr($last_code,2,2);
+            
+            // tambah angkanya
+            $angka++;
+            if($angka > 99){
+                $angka = 1;
+                $huruf++;
+            }
+
+            // TAHAP 4: Gabung lagi dan pastikan angka ada nol di depan (01, 02)
+            $new_code = $huruf . str_pad($angka, 2, '0', STR_PAD_LEFT);
+            
+        }
+
+        return $new_code;
     }
 }

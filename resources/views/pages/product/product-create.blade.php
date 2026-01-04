@@ -10,7 +10,7 @@
     </div>
     <!-- form -->
     <div class="card-body">
-      <form action="{{ route('product.store') }}" method="POST">
+      <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
           <label for="name" class="form-label">Nama Product</label>
@@ -18,6 +18,15 @@
           @error('name')
           <div class="form-text text-danger">{{ $message }}</div>
           @enderror
+        </div>
+        <div class="mb-3">
+           <label for="name" class="form-label">Category</label>
+          <select class="form-control js-example-basic-single" name="category_id">
+            <option selected>Select Category</option>
+            @foreach($data_category as $data_category)
+            <option value="{{$data_category->id}}">{{ $data_category->name }}</option>
+            @endforeach
+          </select>
         </div>
         <div class="mb-3">
           <label for="stock" class="form-label">Stok</label>
@@ -34,6 +43,13 @@
           @enderror
         </div>
         <div class="mb-3">
+          <label for="image" class="form-label">Image</label>
+          <input type="file" class="form-control" id="image" name="image">
+          @error('image')
+          <div class="form-text text-danger">{{ $message }}</div>
+          @enderror
+        </div>
+        <div class="mb-3">
           <label for="description" class="form-label">Deskripsi</label>
           <textarea class="form-control" id="description" name="description" rows="3"></textarea>
           @error('description')
@@ -46,3 +62,16 @@
   </div>
    
 @endsection
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('.js-example-basic-single').select2({
+        theme: 'classic', // opsional: untuk tampilan lebih rapi
+        placeholder: "Pilih data...",
+        allowClear: true
+    });
+});
+</script>

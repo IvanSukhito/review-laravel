@@ -21,6 +21,18 @@
           @enderror
         </div>
         <div class="mb-3">
+           <label for="name" class="form-label">Category</label>
+          <select class="form-control js-example-basic-single" name="category_id">
+            @foreach($data_category as $data_category)
+              @if($data_category->id == $detail_product->category_id)
+              <option value="{{$data_category->id}}" selected>{{ $data_category->name }}</option>
+              @else
+              <option value="{{$data_category->id}}">{{ $data_category->name }}</option>
+              @endif
+            @endforeach
+          </select>
+        </div>
+        <div class="mb-3">
           <label for="stock" class="form-label">Stok</label>
           <input type="number" class="form-control" id="stock" name="stock" value="{{ old('stock') ? old('stock') : $detail_product->stock }}" >
           @error('stock')
@@ -30,6 +42,13 @@
         <div class="mb-3">
           <label for="price" class="form-label">Harga</label>
           <input type="number" class="form-control" id="price" name="price" value="{{ old('price') ? old('price') : $detail_product->price }}" >
+          @error('price')
+          <div class="form-text text-danger">{{ $message }}</div>
+          @enderror
+        </div>
+        <div class="mb-3">
+          <label for="price" class="form-label">Image</label>
+          <input type="file" class="form-control" id="price" name="image">
           @error('price')
           <div class="form-text text-danger">{{ $message }}</div>
           @enderror
